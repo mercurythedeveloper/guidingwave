@@ -728,6 +728,9 @@ h1,h2,h3{text-wrap:pretty}
 @keyframes gw-pulse{0%{box-shadow:0 0 0 6px rgba(var(--accent-rgb),.14)}55%{box-shadow:0 0 0 18px rgba(var(--accent-rgb),0)}100%{box-shadow:0 0 0 6px rgba(var(--accent-rgb),.14)}}
 </style>
 <style>
+/* Auto-hide header: slides away on scroll-down, returns on scroll-up / at top. */
+header.gw-header{transition:transform .32s cubic-bezier(.4,0,.2,1);will-change:transform;}
+header.gw-header.gw-hide{transform:translateY(-100%);}
 /* Keep the brand mark on one line and clear the header on small screens
    by hiding the in-page section links (still reachable by scrolling). */
 @media (max-width:640px){
@@ -746,7 +749,7 @@ h1,h2,h3{text-wrap:pretty}
 <body>
 <div style="max-width:100%;overflow-x:hidden">
 
-<header style="position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:var(--header-bg);border-bottom:1px solid var(--color-divider)">
+<header class="gw-header" style="position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:var(--header-bg);border-bottom:1px solid var(--color-divider)">
   <div class="gw-headinner" style="max-width:1160px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:24px">
     <a href="#top" style="display:flex;align-items:center;gap:10px;color:var(--color-text);flex-shrink:0">
       <svg viewBox="0 0 1024 1024" width="62" height="62" fill="none" style="display:block;width:62px;height:62px;color:rgb(var(--accent-rgb))" aria-hidden="true">
@@ -821,7 +824,7 @@ h1,h2,h3{text-wrap:pretty}
         </div>
       </div>
     </div>
-    <a href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ1pWoOndKx2h9g6fkCwjRPd-M6HINunWwlzA6mau50ymuY5D8NbcbmxheS5gTk0B_zyViokvoLz" target="_blank" rel="noopener noreferrer" style="display:inline-block;font-family:var(--mono);font-size:14px;margin-top:64px">Book a call →</a>
+    <a class="btn btn-primary" href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ1pWoOndKx2h9g6fkCwjRPd-M6HINunWwlzA6mau50ymuY5D8NbcbmxheS5gTk0B_zyViokvoLz" target="_blank" rel="noopener noreferrer" style="font-size:15px;padding:12px 22px;margin-top:64px;box-shadow:0 0 34px rgba(var(--accent-rgb),.22)">Book a call</a>
   </section>
 
   <section id="coaching" data-reveal="" style="padding:32px 0 96px">
@@ -1024,6 +1027,19 @@ h1,h2,h3{text-wrap:pretty}
   // Follow the OS setting live until the visitor makes an explicit choice.
   try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(e){
     if(!stored())setTheme(e.matches?"dark":"light",false);});}catch(e){}
+
+  // Auto-hide header: hide when scrolling down, reveal when scrolling up or at top.
+  var header=document.querySelector("header.gw-header");
+  if(header){
+    var lastY=window.pageYOffset||0, ticking=false;
+    function onScroll(){
+      var y=window.pageYOffset||0;
+      if(y>lastY&&y>header.offsetHeight)header.classList.add("gw-hide");   // scrolling down past the header
+      else if(y<lastY)header.classList.remove("gw-hide");                  // scrolling up
+      lastY=y; ticking=false;
+    }
+    window.addEventListener("scroll",function(){if(!ticking){requestAnimationFrame(onScroll);ticking=true;}},{passive:true});
+  }
 
   // Hover styles (replicates dc-runtime style-hover)
   Array.prototype.forEach.call(document.querySelectorAll("[data-hover]"),function(el){
