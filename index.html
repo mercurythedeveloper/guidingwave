@@ -23,7 +23,7 @@
 <meta name="twitter:title" content="Guiding Wave — Product Development &amp; AI Coaching">
 <meta name="twitter:description" content="Guiding Wave blends product management and hands-on engineering in one team. Less process, more users: we build, ship and grow your product fast, with AI where it actually helps. Product development and practical AI coaching.">
 <meta name="twitter:image" content="https://guidingwave.com/og-image.png">
-<script>(function(){try{document.documentElement.dataset.theme=localStorage.getItem('gw-theme')||'dark';}catch(e){document.documentElement.dataset.theme='dark';}})();</script>
+<script>(function(){try{var s=localStorage.getItem('gw-theme');document.documentElement.dataset.theme=(s==='light'||s==='dark')?s:(window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');}catch(e){document.documentElement.dataset.theme='dark';}})();</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "ProfessionalService", "name": "Guiding Wave", "url": "https://guidingwave.com/", "image": "https://guidingwave.com/og-image.png", "logo": "https://guidingwave.com/og-image.png", "description": "Guiding Wave blends product management and hands-on engineering in one team. Less process, more users: we build, ship and grow your product fast, with AI where it actually helps. Product development and practical AI coaching.", "email": "info@guidingwave.com", "slogan": "Less process. More users.", "areaServed": [{"@type": "Place", "name": "Croatia"}, {"@type": "Place", "name": "European Union"}, {"@type": "Place", "name": "Worldwide (remote)"}], "knowsAbout": ["Product management", "Product development", "MVP development", "Growth experiments", "AI automation", "Lean delivery", "Product coaching"], "makesOffer": [{"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Product development", "description": "Product management and engineering in one team, from first question to growth."}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "AI & product coaching", "description": "Practical training on modern product management and using AI tools in daily work."}}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "Guiding Wave", "url": "https://guidingwave.com/"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What does a typical engagement look like?", "acceptedAnswer": {"@type": "Answer", "text": "A short intro call, then a discovery sprint to agree on the one thing that matters. After that, fixed-scope sprints with visible progress every week."}}, {"@type": "Question", "name": "Do you write code or only manage?", "acceptedAnswer": {"@type": "Answer", "text": "Both. Product leadership and hands-on full-stack engineering come from the same head, which is the point."}}, {"@type": "Question", "name": "Can you help a non-tech company start with AI?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. We start from your actual workflows, pick the one or two places automation pays off first, and ship those."}}, {"@type": "Question", "name": "Remote or on-site?", "acceptedAnswer": {"@type": "Answer", "text": "Remote-first, with on-site time in Croatia and the EU when it genuinely helps."}}, {"@type": "Question", "name": "How is pricing structured?", "acceptedAnswer": {"@type": "Answer", "text": "Sprint-based or fixed scope. We agree the model on the call, once we know what you need."}}]}</script>
@@ -1011,10 +1011,15 @@ h1,h2,h3{text-wrap:pretty}
 
   // Theme toggle
   var tbtn=document.getElementById("gw-theme-toggle");
-  function applyTheme(t){root.dataset.theme=t;try{localStorage.setItem("gw-theme",t);}catch(e){}
-    if(tbtn)tbtn.textContent=(t==="dark"?"Light":"Dark");}
-  if(tbtn){applyTheme(root.dataset.theme||"dark");
-    tbtn.addEventListener("click",function(){applyTheme(root.dataset.theme==="dark"?"light":"dark");});}
+  function stored(){try{var s=localStorage.getItem("gw-theme");return (s==="light"||s==="dark")?s:null;}catch(e){return null;}}
+  function setTheme(t,persist){root.dataset.theme=t;
+    if(tbtn)tbtn.textContent=(t==="dark"?"Light":"Dark");
+    if(persist){try{localStorage.setItem("gw-theme",t);}catch(e){}}}
+  setTheme(root.dataset.theme||"dark",false);            // sync toggle label to the boot-applied theme
+  if(tbtn)tbtn.addEventListener("click",function(){setTheme(root.dataset.theme==="dark"?"light":"dark",true);});
+  // Follow the OS setting live until the visitor makes an explicit choice.
+  try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(e){
+    if(!stored())setTheme(e.matches?"dark":"light",false);});}catch(e){}
 
   // Hover styles (replicates dc-runtime style-hover)
   Array.prototype.forEach.call(document.querySelectorAll("[data-hover]"),function(el){
