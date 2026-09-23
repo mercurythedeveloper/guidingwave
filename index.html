@@ -1001,12 +1001,21 @@ header.gw-header.gw-hide{transform:translateY(-100%);}
         <a href="#services" style="color:var(--muted)">Services</a>
         <a href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ1pWoOndKx2h9g6fkCwjRPd-M6HINunWwlzA6mau50ymuY5D8NbcbmxheS5gTk0B_zyViokvoLz" target="_blank" rel="noopener noreferrer" style="color:var(--muted)">Book a call</a>
       </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a href="legal.html" style="color:var(--muted)">Legal Notice</a>
+        <a href="privacy.html" style="color:var(--muted)">Privacy Policy</a>
+      </div>
     </div>
   </div>
   <div style="max-width:1160px;margin:0 auto;padding:0 24px 40px;font-family:var(--mono);font-size:12px;color:var(--muted)">© Guiding Wave d.o.o.</div>
 </footer>
 
-
+<div id="gw-cookie-notice" hidden style="position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--header-bg);backdrop-filter:blur(14px);border-top:1px solid var(--color-divider)">
+  <div style="max-width:1160px;margin:0 auto;padding:14px 24px;display:flex;gap:16px 24px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+    <p style="margin:0;font-size:14px;line-height:1.5;color:var(--color-text)">This website uses <strong style="font-weight:600">no cookies</strong> and no tracking — nothing to accept. See our <a href="privacy.html">Privacy Policy</a>.</p>
+    <button id="gw-cookie-dismiss" style="flex-shrink:0;background:none;border:1px solid var(--color-divider);border-radius:8px;padding:8px 16px;cursor:pointer;color:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase" data-hover="color:var(--hover-text);border-color:var(--color-accent)">Got it</button>
+  </div>
+</div>
 
 </div>
 <script>
@@ -1027,6 +1036,18 @@ header.gw-header.gw-hide{transform:translateY(-100%);}
   // Follow the OS setting live until the visitor makes an explicit choice.
   try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(e){
     if(!stored())setTheme(e.matches?"dark":"light",false);});}catch(e){}
+
+  // No-cookie notice — shown once, only to visitors in an EU member state (detected via IANA time zone).
+  (function(){
+    var EU={"Europe/Vienna":1,"Europe/Brussels":1,"Europe/Sofia":1,"Europe/Zagreb":1,"Asia/Nicosia":1,"Asia/Famagusta":1,"Europe/Prague":1,"Europe/Copenhagen":1,"Europe/Tallinn":1,"Europe/Helsinki":1,"Europe/Paris":1,"Europe/Berlin":1,"Europe/Busingen":1,"Europe/Athens":1,"Europe/Budapest":1,"Europe/Dublin":1,"Europe/Rome":1,"Europe/Riga":1,"Europe/Vilnius":1,"Europe/Luxembourg":1,"Europe/Malta":1,"Europe/Amsterdam":1,"Europe/Warsaw":1,"Europe/Lisbon":1,"Atlantic/Azores":1,"Atlantic/Madeira":1,"Europe/Bucharest":1,"Europe/Bratislava":1,"Europe/Ljubljana":1,"Europe/Madrid":1,"Africa/Ceuta":1,"Atlantic/Canary":1,"Europe/Stockholm":1};
+    try{if(localStorage.getItem("gw-cookie-notice")==="dismissed")return;}catch(e){}
+    var tz="";try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){}
+    if(!EU[tz])return;
+    var el=document.getElementById("gw-cookie-notice");if(!el)return;
+    el.hidden=false;
+    var btn=document.getElementById("gw-cookie-dismiss");
+    if(btn)btn.addEventListener("click",function(){el.hidden=true;try{localStorage.setItem("gw-cookie-notice","dismissed");}catch(e){}});
+  })();
 
   // Auto-hide header: hide when scrolling down, reveal when scrolling up or at top.
   var header=document.querySelector("header.gw-header");
